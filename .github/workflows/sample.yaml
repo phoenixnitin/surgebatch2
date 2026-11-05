@@ -7,7 +7,7 @@ on:
       - master
   pull_request:
     branches:
-      - master
+      - test
 
 permissions:
   contents: read
@@ -33,7 +33,11 @@ jobs:
           java-version: "17"
           cache: maven
           cache-dependency-path: ${{ env.WORKDIR }}/pom.xml
-
+      - name: Update Package version
+        run: |
+          mvn versions:set -DnewVersion=1.0.${{ github.run_number }}
+          mvn versions:commit
+        working-directory: ${{ env.WORKDIR }}
       - name: Configure Maven settings.xml for Nexus
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
@@ -90,3 +94,9 @@ jobs:
       - name: Publish JAR to Nexus
         working-directory: ${{ env.WORKDIR }}
         run: mvn -B deploy -DskipTests
+      
+      - name: Sonar
+        working-directory: ${{ env.WORKDIR }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=phoenixnitin_surgebatch2
