@@ -71,7 +71,7 @@ jobs:
         working-directory: ${{ env.WORKDIR }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+        run: mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=phoenixnitin_surgebatch2
 
       # - name: Deploy to Nexus
       #   run: mvn deploy
